@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Medical Chatbot</title>
+    <style>
+        /* Chat container */
+        #chat-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 3px solid blue;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        /* Chat messages */
+        .chat-message {
+            margin: 10px 0;
+        }
+
+        /* User message */
+        .user-message {
+            text-align: right;
+        }
+
+        /* Bot message */
+        .bot-message {
+            text-align: left;
+        }
+
+        /* User icon */
+        .user-icon {
+            width: 30px;
+            height: 30px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 50%;
+            display: inline-block;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card mt-5">
+            <div class="card-body">
+                <h1 class="mb-4 text-center" style="color:blue;">Welcome to Medi</h1>
+                <div id="chat-box" class="mb-3"></div>
+                <form id="chat-form">
+                    <div class="input-container text-center">
+                    <input type="text" id="user-input" class="form-control mb-3" style="max-width:50%; border: 4px solid blue;  margin-left:auto; margin-right:auto;" placeholder="Type your message here...">
+                    <button class="btn btn-primary" type="button" onclick="sendMessage()">Send</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function sendMessage() {
+            var user_input = document.getElementById("user-input").value;
+            document.getElementById("chat-box").innerHTML += `
+                <div class="chat-message user-message">
+                    <span class="user-icon">U</span>
+                    ${user_input}
+                </div>`;
+            document.getElementById("user-input").value = "";
+            scrollToBottom();
+            getBotResponse(user_input);
+        }
+
+        function getBotResponse(user_input) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/get?msg=" + user_input, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var bot_response = xhr.responseText;
+                    document.getElementById("chat-box").innerHTML += `
+                        <div class="chat-message bot-message">
+                            <span class="user-icon">B</span>
+                            ${bot_response}
+                        </div>`;
+                    scrollToBottom();
+                }
+            };
+            xhr.send();
+        }
+
+        function scrollToBottom() {
+            var chatbox = document.getElementById("chat-box");
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
